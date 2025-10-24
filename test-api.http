@@ -1,0 +1,54 @@
+# Test API với MongoDB Atlas
+
+## 1. Test validation - Đăng ký với dữ liệu không hợp lệ
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "A",
+  "email": "invalid-email", 
+  "password": "123"
+}
+
+### 2. Đăng ký user mới với dữ liệu hợp lệ
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Duc Nguyen",
+  "email": "duc@example.com", 
+  "password": "Password123"
+}
+
+### 3. Test đăng ký email trùng lặp
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Another User",
+  "email": "duc@example.com", 
+  "password": "Password123"
+}
+
+### 4. Đăng nhập
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "duc@example.com",
+  "password": "Password123"
+}
+
+### 5. Lấy thông tin profile (cần token từ bước đăng nhập)
+GET http://localhost:5000/api/users/profile
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 6. Cập nhật profile với validation
+PUT http://localhost:5000/api/users/profile
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "name": "Duc Updated",
+  "email": "duc.updated@example.com"
+}
