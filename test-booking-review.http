@@ -1,0 +1,108 @@
+# Test Booking và Review APIs
+
+### === BOOKING APIs ===
+
+### 1. Kiểm tra tính khả dụng (Public)
+GET http://localhost:5000/api/bookings/check-availability?listing_id=HOMESTAY_ID_HERE&check_in=2025-11-01&check_out=2025-11-03
+
+### 2. Tạo booking mới (Private - cần token)
+POST http://localhost:5000/api/bookings/create
+Authorization: Bearer YOUR_USER_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "listing_id": "HOMESTAY_ID_HERE",
+  "check_in": "2025-11-01",
+  "check_out": "2025-11-03",
+  "guests": 2,
+  "total_price": 3000000,
+  "payment_method": "Credit Card"
+}
+
+### 3. Lấy lịch sử booking của user (Private)
+GET http://localhost:5000/api/bookings/user
+
+### 4. Lấy booking theo status
+GET http://localhost:5000/api/bookings/user?status=pending&page=1&limit=5
+Authorization: Bearer YOUR_USER_TOKEN_HERE
+
+### 5. Hủy booking (Private)
+POST http://localhost:5000/api/bookings/BOOKING_ID_HERE/cancel
+Authorization: Bearer YOUR_USER_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "cancel_reason": "Change of plans"
+}
+
+### === REVIEW APIs ===
+
+### 6. Lấy danh sách reviews của homestay (Public)
+GET http://localhost:5000/api/reviews/listing/HOMESTAY_ID_HERE
+
+### 7. Lấy reviews với phân trang
+GET http://localhost:5000/api/reviews/listing/HOMESTAY_ID_HERE?page=1&limit=5
+
+### 8. Tạo review mới (Private - chỉ user đã booking completed)
+POST http://localhost:5000/api/reviews/create
+Authorization: Bearer YOUR_USER_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "listing_id": "HOMESTAY_ID_HERE",
+  "rating": 5,
+  "comment": "Homestay tuyệt vời! View đẹp, sạch sẽ, chủ nhà thân thiện. Sẽ quay lại lần sau."
+}
+
+### === WORKFLOW TESTING ===
+
+### Step 1: Đăng ký user
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "testuser@example.com",
+  "password": "Password123"
+}
+
+### Step 2: Đăng nhập lấy token
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "Password123"
+}
+
+### Step 3: Lấy danh sách homestay
+GET http://localhost:5000/api/listings?location=Đà Lạt
+
+### Step 4: Kiểm tra availability
+GET http://localhost:5000/api/bookings/check-availability?listing_id=HOMESTAY_ID&check_in=2025-11-01&check_out=2025-11-03
+
+### Step 5: Tạo booking
+POST http://localhost:5000/api/bookings/create
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+{
+  "listing_id": "HOMESTAY_ID",
+  "check_in": "2025-11-01",
+  "check_out": "2025-11-03",
+  "guests": 2,
+  "total_price": 3000000
+}
+
+### Step 6: Cập nhật booking status thành completed (Manual trong DB hoặc admin API)
+
+### Step 7: Tạo review
+POST http://localhost:5000/api/reviews/create
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+{
+  "listing_id": "HOMESTAY_ID",
+  "rating": 5,
+  "comment": "Homestay tuyệt vời!"
+}

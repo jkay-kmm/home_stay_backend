@@ -26,6 +26,11 @@ const updateProfile = async (req, res, next) => {
       email: req.body.email
     };
 
+    // Allow admin to update role
+    if (req.user.role === 'admin' && req.body.role) {
+      fieldsToUpdate.role = req.body.role;
+    }
+
     const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
       new: true,
       runValidators: true
@@ -80,9 +85,34 @@ const getUser = async (req, res, next) => {
   }
 };
 
+// @desc    Apply to become a host
+// @route   PUT /api/users/become-host
+// @access  Private
+const becomeHost = async (req, res, next) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user.id, 
+      { role: 'host' }, 
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'You are now a host!',
+      data: user
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getProfile,
   updateProfile,
   getUsers,
-  getUser
+  getUser,
+  becomeHost
 };

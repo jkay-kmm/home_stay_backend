@@ -100,6 +100,94 @@ const validateResetPassword = [
     })
 ];
 
+// Validation rules for homestay creation
+const validateHomestay = [
+  body('title')
+    .trim()
+    .isLength({ min: 5, max: 100 })
+    .withMessage('Title must be between 5 and 100 characters'),
+  
+  body('description')
+    .trim()
+    .isLength({ min: 20, max: 1000 })
+    .withMessage('Description must be between 20 and 1000 characters'),
+  
+  body('location')
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Location must be between 2 and 100 characters'),
+  
+  body('address')
+    .trim()
+    .isLength({ min: 10, max: 200 })
+    .withMessage('Address must be between 10 and 200 characters'),
+  
+  body('price')
+    .isFloat({ min: 0 })
+    .withMessage('Price must be a positive number'),
+  
+  body('maxGuests')
+    .isInt({ min: 1, max: 20 })
+    .withMessage('Max guests must be between 1 and 20'),
+  
+  body('bedrooms')
+    .isInt({ min: 1, max: 10 })
+    .withMessage('Bedrooms must be between 1 and 10'),
+  
+  body('bathrooms')
+    .isInt({ min: 1, max: 10 })
+    .withMessage('Bathrooms must be between 1 and 10'),
+  
+  body('amenities')
+    .optional()
+    .isArray()
+    .withMessage('Amenities must be an array'),
+];
+
+// Validation rules for booking creation
+const validateBooking = [
+  body('listing_id')
+    .isMongoId()
+    .withMessage('Invalid homestay ID'),
+  
+  body('check_in')
+    .isISO8601()
+    .withMessage('Check-in date must be a valid date'),
+  
+  body('check_out')
+    .isISO8601()
+    .withMessage('Check-out date must be a valid date'),
+  
+  body('guests')
+    .isInt({ min: 1, max: 20 })
+    .withMessage('Guests must be between 1 and 20'),
+  
+  body('total_price')
+    .isFloat({ min: 0 })
+    .withMessage('Total price must be a positive number'),
+  
+  body('payment_method')
+    .optional()
+    .isIn(['Credit Card', 'Bank Transfer', 'Cash', 'E-Wallet'])
+    .withMessage('Invalid payment method'),
+];
+
+// Validation rules for review creation
+const validateReview = [
+  body('listing_id')
+    .isMongoId()
+    .withMessage('Invalid homestay ID'),
+  
+  body('rating')
+    .isInt({ min: 1, max: 5 })
+    .withMessage('Rating must be between 1 and 5'),
+  
+  body('comment')
+    .trim()
+    .isLength({ min: 5, max: 500 })
+    .withMessage('Comment must be between 5 and 500 characters'),
+];
+
 // Middleware to handle validation errors
 const handleValidationErrors = (req, res, next) => {
   const errors = validationResult(req);
@@ -122,5 +210,8 @@ module.exports = {
   validateChangePassword,
   validateForgotPassword,
   validateResetPassword,
+  validateHomestay,
+  validateBooking,
+  validateReview,
   handleValidationErrors
 };

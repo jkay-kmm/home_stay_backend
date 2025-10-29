@@ -1,0 +1,73 @@
+# Test Homestay Listings API
+
+### 1. Lấy tất cả homestays (Public)
+GET http://localhost:5000/api/listings
+
+### 2. Tìm kiếm theo location
+GET http://localhost:5000/api/listings?location=Đà Lạt
+
+### 3. Tìm kiếm với filter đầy đủ
+GET http://localhost:5000/api/listings?location=Hà Nội&min_price=500000&max_price=2000000&guests=2&amenities=Wifi&amenities=Bể bơi&page=1&limit=5
+
+### 4. Tìm kiếm với ngày check-in/check-out
+GET http://localhost:5000/api/listings?location=Đà Lạt&check_in=2025-11-01&check_out=2025-11-03&guests=2
+
+### 5. Lấy chi tiết homestay theo ID
+GET http://localhost:5000/api/listings/HOMESTAY_ID_HERE
+
+### 6. Tạo homestay mới (cần token Host)
+POST http://localhost:5000/api/listings
+Authorization: Bearer YOUR_HOST_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "title": "Villa đẹp view núi Đà Lạt",
+  "description": "Villa sang trọng với view núi tuyệt đẹp, không gian yên tĩnh, thích hợp cho gia đình nghỉ dưỡng",
+  "location": "Đà Lạt",
+  "address": "123 Đường Trần Phú, Phường 4, Thành phố Đà Lạt, Lâm Đồng",
+  "price": 1500000,
+  "maxGuests": 6,
+  "bedrooms": 3,
+  "bathrooms": 2,
+  "amenities": ["Wifi", "Bể bơi", "Bãi đậu xe", "Điều hòa", "Bếp"],
+  "images": [
+    {
+      "url": "https://example.com/image1.jpg",
+      "alt": "Living room"
+    },
+    {
+      "url": "https://example.com/image2.jpg", 
+      "alt": "Bedroom"
+    }
+  ],
+  "coordinates": {
+    "latitude": 11.9404,
+    "longitude": 108.4583
+  }
+}
+
+### 7. Cập nhật homestay (cần token Host và là chủ nhà)
+PUT http://localhost:5000/api/listings/HOMESTAY_ID_HERE
+Authorization: Bearer YOUR_HOST_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "title": "Villa đẹp view núi Đà Lạt - Updated",
+  "price": 1800000,
+  "amenities": ["Wifi", "Bể bơi", "Bãi đậu xe", "Điều hòa", "Bếp", "Jacuzzi"]
+}
+
+### 8. Xóa homestay (Soft delete - cần token Host)
+DELETE http://localhost:5000/api/listings/HOMESTAY_ID_HERE
+Authorization: Bearer YOUR_HOST_TOKEN_HERE
+
+### 9. Đăng ký user với role Host
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Host User",
+  "email": "host@example.com",
+  "password": "Password123",
+  "role": "host"
+}
