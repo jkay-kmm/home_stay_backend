@@ -42,16 +42,60 @@ const validateProfileUpdate = [
     .trim()
     .isLength({ min: 2, max: 50 })
     .withMessage('Name must be between 2 and 50 characters')
-    .matches(/^[a-zA-Z\s]+$/)
+    .matches(/^[a-zA-ZÀ-ỹ\s]+$/)
     .withMessage('Name can only contain letters and spaces'),
   
-  body('email')
+  body('phone')
     .optional()
-    .isEmail()
-    .normalizeEmail()
-    .withMessage('Please provide a valid email')
-    .isLength({ max: 255 })
-    .withMessage('Email is too long'),
+    .matches(/^[0-9]{10,11}$/)
+    .withMessage('Phone must be 10-11 digits'),
+  
+  body('avatar')
+    .optional()
+    .isURL()
+    .withMessage('Avatar must be a valid URL'),
+  
+  body('dateOfBirth')
+    .optional()
+    .isISO8601()
+    .withMessage('Date of birth must be a valid date'),
+  
+  body('gender')
+    .optional()
+    .isIn(['male', 'female', 'other'])
+    .withMessage('Gender must be male, female, or other'),
+  
+  body('bio')
+    .optional()
+    .isLength({ max: 500 })
+    .withMessage('Bio cannot be more than 500 characters'),
+  
+  body('languages')
+    .optional()
+    .isArray()
+    .withMessage('Languages must be an array'),
+  
+  body('address.city')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('City must be between 2 and 50 characters'),
+  
+  body('address.country')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Country must be between 2 and 50 characters'),
+  
+  body('preferences.currency')
+    .optional()
+    .isIn(['VND', 'USD', 'EUR'])
+    .withMessage('Currency must be VND, USD, or EUR'),
+  
+  body('preferences.language')
+    .optional()
+    .isIn(['vi', 'en'])
+    .withMessage('Language must be vi or en'),
 ];
 
 // Validation rules for password change

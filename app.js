@@ -24,6 +24,7 @@ app.use('/api/users', require('./src/routes/users'));
 app.use('/api/listings', require('./src/routes/listings'));
 app.use('/api/bookings', require('./src/routes/bookings'));
 app.use('/api/reviews', require('./src/routes/reviews'));
+app.use('/api/profile', require('./src/routes/profile'));
 app.use('/api/system', require('./src/routes/system'));
 
 // Error handler middleware

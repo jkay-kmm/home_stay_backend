@@ -1,4 +1,6 @@
-# Test API với MongoDB Atlas
+  # Tổng hợp các API
+  
+   # Test API với MongoDB Atlas
 
 ## 1. Test validation - Đăng ký với dữ liệu không hợp lệ
 POST http://localhost:5000/api/auth/register
@@ -51,4 +53,325 @@ Content-Type: application/json
 {
   "name": "Duc Updated",
   "email": "duc.updated@example.com"
+}
+# Test Booking và Review APIs
+
+### === BOOKING APIs ===
+
+### 1. Kiểm tra tính khả dụng (Public)
+GET http://localhost:5000/api/bookings/check-availability?listing_id=HOMESTAY_ID_HERE&check_in=2025-11-01&check_out=2025-11-03
+
+### 2. Tạo booking mới (Private - cần token)
+POST http://localhost:5000/api/bookings/create
+Authorization: Bearer YOUR_USER_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "listing_id": "HOMESTAY_ID_HERE",
+  "check_in": "2025-11-01",
+  "check_out": "2025-11-03",
+  "guests": 2,
+  "total_price": 3000000,
+  "payment_method": "Credit Card"
+}
+
+### 3. Lấy lịch sử booking của user (Private)
+GET http://localhost:5000/api/bookings/user
+
+### 4. Lấy booking theo status
+GET http://localhost:5000/api/bookings/user?status=pending&page=1&limit=5
+Authorization: Bearer YOUR_USER_TOKEN_HERE
+
+### 5. Hủy booking (Private)
+POST http://localhost:5000/api/bookings/BOOKING_ID_HERE/cancel
+Authorization: Bearer YOUR_USER_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "cancel_reason": "Change of plans"
+}
+
+### === REVIEW APIs ===
+
+### 6. Lấy danh sách reviews của homestay (Public)
+GET http://localhost:5000/api/reviews/listing/HOMESTAY_ID_HERE
+
+### 7. Lấy reviews với phân trang
+GET http://localhost:5000/api/reviews/listing/HOMESTAY_ID_HERE?page=1&limit=5
+
+### 8. Tạo review mới (Private - chỉ user đã booking completed)
+POST http://localhost:5000/api/reviews/create
+Authorization: Bearer YOUR_USER_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "listing_id": "HOMESTAY_ID_HERE",
+  "rating": 5,
+  "comment": "Homestay tuyệt vời! View đẹp, sạch sẽ, chủ nhà thân thiện. Sẽ quay lại lần sau."
+}
+
+### === WORKFLOW TESTING ===
+
+### Step 1: Đăng ký user
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "testuser@example.com",
+  "password": "Password123"
+}
+
+### Step 2: Đăng nhập lấy token
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "Password123"
+}
+
+### Step 3: Lấy danh sách homestay
+GET http://localhost:5000/api/listings?location=Đà Lạt
+
+### Step 4: Kiểm tra availability
+GET http://localhost:5000/api/bookings/check-availability?listing_id=HOMESTAY_ID&check_in=2025-11-01&check_out=2025-11-03
+
+### Step 5: Tạo booking
+POST http://localhost:5000/api/bookings/create
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+{
+  "listing_id": "HOMESTAY_ID",
+  "check_in": "2025-11-01",
+  "check_out": "2025-11-03",
+  "guests": 2,
+  "total_price": 3000000
+}
+
+### Step 6: Cập nhật booking status thành completed (Manual trong DB hoặc admin API)
+
+### Step 7: Tạo review
+POST http://localhost:5000/api/reviews/create
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+{
+  "listing_id": "HOMESTAY_ID",
+  "rating": 5,
+  "comment": "Homestay tuyệt vời!"
+}
+# Test Homestay Listings API
+
+### 1. Lấy tất cả homestays (Public)
+GET http://localhost:5000/api/listings
+
+### 2. Tìm kiếm theo location
+GET http://localhost:5000/api/listings?location=Đà Lạt
+
+### 3. Tìm kiếm với filter đầy đủ
+GET http://localhost:5000/api/listings?location=Hà Nội&min_price=500000&max_price=2000000&guests=2&amenities=Wifi&amenities=Bể bơi&page=1&limit=5
+
+### 4. Tìm kiếm với ngày check-in/check-out
+GET http://localhost:5000/api/listings?location=Đà Lạt&check_in=2025-11-01&check_out=2025-11-03&guests=2
+
+### 5. Lấy chi tiết homestay theo ID
+GET http://localhost:5000/api/listings/HOMESTAY_ID_HERE
+
+### 6. Tạo homestay mới (cần token Host)
+POST http://localhost:5000/api/listings
+Authorization: Bearer YOUR_HOST_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "title": "Villa đẹp view núi Đà Lạt",
+  "description": "Villa sang trọng với view núi tuyệt đẹp, không gian yên tĩnh, thích hợp cho gia đình nghỉ dưỡng",
+  "location": "Đà Lạt",
+  "address": "123 Đường Trần Phú, Phường 4, Thành phố Đà Lạt, Lâm Đồng",
+  "price": 1500000,
+  "maxGuests": 6,
+  "bedrooms": 3,
+  "bathrooms": 2,
+  "amenities": ["Wifi", "Bể bơi", "Bãi đậu xe", "Điều hòa", "Bếp"],
+  "images": [
+    {
+      "url": "https://example.com/image1.jpg",
+      "alt": "Living room"
+    },
+    {
+      "url": "https://example.com/image2.jpg", 
+      "alt": "Bedroom"
+    }
+  ],
+  "coordinates": {
+    "latitude": 11.9404,
+    "longitude": 108.4583
+  }
+}
+
+### 7. Cập nhật homestay (cần token Host và là chủ nhà)
+PUT http://localhost:5000/api/listings/HOMESTAY_ID_HERE
+Authorization: Bearer YOUR_HOST_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "title": "Villa đẹp view núi Đà Lạt - Updated",
+  "price": 1800000,
+  "amenities": ["Wifi", "Bể bơi", "Bãi đậu xe", "Điều hòa", "Bếp", "Jacuzzi"]
+}
+
+### 8. Xóa homestay (Soft delete - cần token Host)
+DELETE http://localhost:5000/api/listings/HOMESTAY_ID_HERE
+Authorization: Bearer YOUR_HOST_TOKEN_HERE
+
+### 9. Đăng ký user với role Host
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Host User",
+  "email": "host@example.com",
+  "password": "Password123",
+  "role": "host"
+}
+# Test Profile APIs
+
+### === PROFILE APIs ===
+
+### 1. Lấy profile hiện tại (Private)
+GET http://localhost:5000/api/profile
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### 2. Cập nhật profile đầy đủ (Private)
+PUT http://localhost:5000/api/profile
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "name": "Nguyen Van Duc Updated",
+  "phone": "0987654321",
+  "avatar": "https://example.com/avatar.jpg",
+  "dateOfBirth": "1990-01-15",
+  "gender": "male",
+  "address": {
+    "street": "123 Nguyen Hue",
+    "city": "Ho Chi Minh City",
+    "state": "Ho Chi Minh",
+    "country": "Vietnam",
+    "zipCode": "70000"
+  },
+  "bio": "Passionate traveler and homestay enthusiast. Love exploring new places and meeting new people.",
+  "languages": ["Vietnamese", "English", "Chinese"],
+  "preferences": {
+    "currency": "VND",
+    "language": "vi",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    }
+  },
+  "hostInfo": {
+    "responseTime": "within an hour"
+  }
+}
+
+### 3. Cập nhật avatar (Private)
+PUT http://localhost:5000/api/profile/avatar
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "avatar": "https://example.com/new-avatar.jpg"
+}
+
+### 4. Xác thực email/phone (Private)
+PUT http://localhost:5000/api/profile/verify
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "type": "email",
+  "verified": true
+}
+
+### 5. Xác thực phone (Private)
+PUT http://localhost:5000/api/profile/verify
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "type": "phone",
+  "verified": true
+}
+
+### 6. Lấy dashboard stats (Private)
+GET http://localhost:5000/api/profile/dashboard
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### 7. Xem public profile theo ID (Public)
+GET http://localhost:5000/api/profile/USER_ID_HERE
+
+### === WORKFLOW TEST ===
+
+### Step 1: Đăng ký user mới
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test Profile User",
+  "email": "profile.test@example.com",
+  "password": "Password123"
+}
+
+### Step 2: Đăng nhập lấy token
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "profile.test@example.com",
+  "password": "Password123"
+}
+
+### Step 3: Lấy profile ban đầu
+GET http://localhost:5000/api/profile
+Authorization: Bearer YOUR_TOKEN
+
+### Step 4: Upgrade thành host
+PUT http://localhost:5000/api/users/become-host
+Authorization: Bearer YOUR_TOKEN
+
+### Step 5: Cập nhật profile đầy đủ
+PUT http://localhost:5000/api/profile
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+{
+  "name": "Profile Test Host",
+  "phone": "0901234567",
+  "bio": "Friendly host providing comfortable stays",
+  "languages": ["Vietnamese", "English"],
+  "address": {
+    "city": "Da Lat",
+    "country": "Vietnam"
+  },
+  "hostInfo": {
+    "responseTime": "within an hour"
+  }
+}
+
+### Step 6: Xem dashboard host
+GET http://localhost:5000/api/profile/dashboard
+Authorization: Bearer YOUR_TOKEN
+
+### Step 7: Test validation - cập nhật profile với dữ liệu sai
+PUT http://localhost:5000/api/profile
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+{
+  "name": "A",
+  "phone": "123",
+  "gender": "invalid"
 }

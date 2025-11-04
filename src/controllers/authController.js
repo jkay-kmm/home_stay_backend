@@ -58,6 +58,10 @@ const login = async (req, res, next) => {
       });
     }
 
+    // Update last login time
+    user.lastLoginAt = new Date();
+    await user.save({ validateBeforeSave: false });
+
     sendTokenResponse(user, 200, res);
   } catch (err) {
     next(err);
